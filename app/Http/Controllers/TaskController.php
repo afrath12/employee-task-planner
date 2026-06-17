@@ -60,12 +60,13 @@ class TaskController extends Controller
 
         // Validate the updated inputs (Note: 'status' is now required here)
         $validated = $request->validate([
-            'title' => 'required|max:255',
-            'description' => 'nullable',
-            'employee_name' => 'required|max:255',
-            'due_date' => 'required|date',
-            'status' => 'required|in:Pending,In Progress,Completed', // Must be one of these 3 choices
-        ]);
+        'title' => 'required|max:255',
+        'description' => 'nullable',
+        'employee_name' => 'required|max:255',
+        // Dynamic rule: compares the input date against the existing database date
+        'due_date' => 'required|date|after_or_equal:' . $task->due_date, 
+        'status' => 'required|in:Pending,In Progress,Completed',
+    ]);
 
         // Update the database row with the new data
         $task->update($validated);
